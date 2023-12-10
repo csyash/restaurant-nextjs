@@ -1,13 +1,68 @@
 "use client";
 import Image from "next/image";
-import React, { useState } from "react";
-import { singleProduct } from "@/app/data";
+import React, { useState, useEffect } from "react";
+import { ProductType } from "@/types/types";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useCartStore } from "@/utils/CartStore";
 
-const ProductPage = () => {
-  const [quantity, setQuantity] = useState(1);
-  const [optionIdx, setOptionIdx] = useState(0);
+const ProductPage = ({ params }: { params: { id: string } }) => {
+  const { data: session } = useSession();
+  const [quantity, setQuantity] = useState<number>(1);
+  const [optionIdx, setOptionIdx] = useState<number>(0);
+  const router = useRouter();
+  const [singleProduct, setSingleProduct] = useState<ProductType>({
+    id: "",
+    title: "",
+    desc: "",
+    img: "",
+    price: 0,
+    options: [
+      {
+        title: "",
+        additionalPrice: 0,
+      },
+    ],
+  });
+  const { id } = params;
+  const { addToCart } = useCartStore();
+  const totalPrice = singleProduct.options?.length
+    ? quantity *
+      (Number(singleProduct.price) +
+        Number(singleProduct.options[optionIdx]?.additionalPrice))
+    : quantity * Number(singleProduct.price);
+
+  useEffect(() => {
+    const getData = async (id: string) => {
+      const res = await fetch(`http://localhost:3000/api/products/${id}`);
+
+      if (!res.ok) throw new Error("Something went wrong");
+
+      const data = await res.json();
+      setSingleProduct(data);
+    };
+
+    getData(id);
+    useCartStore.persist.rehydrate();
+  }, [id]);
+
+  const deleteProductHandler = async (id: string) => {
+    const res = await fetch(`http://localhost:3000/api/products/${id}`, {
+      method: "DELETE",
+    });
+
+    if (res.ok) {
+      router.push("/");
+      toast.success("Product Deleted");
+    } else {
+      toast.error("Delete product failed");
+    }
+  };
 
   const isOptionSelected = (index: number) => index === optionIdx;
+
   return (
     <div className="flex flex-col gap-4 h-[calc(100vh-6rem-3rem)] p-4 lg:px-20 xl:px-40 text-red-500 md:py-8 md:flex-row md:gap-10">
       {/* IMG CONTAINER */}
@@ -17,25 +72,26 @@ const ProductPage = () => {
             src={singleProduct.img}
             fill
             alt={singleProduct.title}
-            className="object-contain hover:rotate-[30deg] transition-all ease-out"
+            className="object-contain"
           />
         )}
       </div>
-      <div className="bottom w-full flex flex-col gap-4 pper flex-1 px-2 md:gap-10 md:justify-start md:py-8">
+      <div className="bottom w-full flex flex-col gap-4 pper flex-1 px-2 md:gap-10 md:justify-start md:py-8 relative">
+        {session?.user.isAdmin && (
+          <button
+            className="absolute text-white font-bold bg-red-500 py-3 px-4 rounded-md right-0"
+            onClick={() => deleteProductHandler(singleProduct.id)}
+          >
+            Delete
+          </button>
+        )}
         <h1 className="text-2xl font-extrabold uppercase md:text-3xl">
           {singleProduct.title}
         </h1>
         <p className="text-red-600 text-lg md:text-xl">{singleProduct.desc}</p>
-        {singleProduct.options && (
-          <span className="text-2xl font-extrabold">
-            $
-            {(
-              (singleProduct.price +
-                singleProduct.options[optionIdx].additionalPrice) *
-              quantity
-            ).toFixed(2)}
-          </span>
-        )}
+
+        <span className="text-2xl font-extrabold">${totalPrice}</span>
+
         <div className="flex gap-4 buttons-container">
           {singleProduct.options &&
             singleProduct.options.map((option, index) => {
@@ -75,8 +131,29 @@ const ProductPage = () => {
               </span>
             </div>
           </div>
-          <button className="px-3 py-2 flex-1 font-bold h-full bg-red-500 text-white uppercase">
-            Add
+          <button
+            className="px-3 py-2 flex-1 font-bold h-full bg-red-500 text-white uppercase"
+            onClick={() => {
+              addToCart({
+                id: singleProduct.id,
+                title: singleProduct.title,
+                img: singleProduct.img,
+                price: totalPrice,
+                quantity: quantity,
+                optionTitle: singleProduct.options?.length
+                  ? singleProduct.options[optionIdx].title
+                  : "regular",
+              });
+              toast.success(
+                `${singleProduct.title} ${
+                  singleProduct.options?.length
+                    ? singleProduct.options?.[optionIdx].title
+                    : ""
+                } was added`
+              );
+            }}
+          >
+            Add to cart
           </button>
         </div>
       </div>

@@ -51,9 +51,10 @@ const Slider = () => {
       <div className="relative h-1/2 flex-1 md:h-full">
         <Image
           src={data[index].image}
-          fill={true}
+          fill
           alt="slider img"
           className="object-cover"
+          sizes="100%"
         />
       </div>
     </div>

@@ -28,6 +28,7 @@ const Offer = () => {
           alt="Burger pic"
           fill
           className="object-contain"
+          sizes="100%"
         />
       </div>
     </div>

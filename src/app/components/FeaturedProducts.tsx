@@ -1,8 +1,19 @@
 import React from "react";
 import Image from "next/image";
-import { featuredProducts } from "../data";
+import { ProductType } from "@/types/types";
 
-const FeaturedProducts = () => {
+const getData = async () => {
+  const res = await fetch("http://localhost:3000/api/products", {
+    cache: "no-cache",
+  });
+
+  if (!res.ok) throw new Error("Unable to fetch data");
+
+  return res.json();
+};
+
+const FeaturedProducts = async () => {
+  const featuredProducts: ProductType[] = await getData();
   return (
     <div className="w-screen overflow-x-scroll text-red-500 h-[80vh] no-scrollbar">
       {/* WRAPPER  */}
@@ -12,16 +23,17 @@ const FeaturedProducts = () => {
           return (
             <div
               key={product.id}
-              className="w-screen flex group flex-col items-center justify-between h-full p-4 gap-8 hover:bg-fuchsia-50 md:w-[calc(100vw/2)] lg:w-[calc(100vw/3)] lg:gap-4"
+              className="w-screen flex  flex-col items-center justify-between h-full p-4 gap-8 hover:bg-fuchsia-50 md:w-[calc(100vw/2)] lg:w-[calc(100vw/3)] lg:gap-4"
             >
               {/* IMAGE CONTAINER  */}
               {product.img && (
-                <div className="relative flex-1 w-full group-hover:rotate-[30deg] ease-in transition-all ">
+                <div className="relative flex-1 w-full ">
                   <Image
                     fill
                     src={product.img}
                     alt="img"
                     className="object-contain"
+                    sizes="100%"
                   />
                 </div>
               )}

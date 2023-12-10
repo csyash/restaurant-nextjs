@@ -1,9 +1,9 @@
 import React from "react";
 import Menu from "./Menu";
 import Link from "next/link";
+import UserLinks from "./UserLinks";
 
 const Nav = () => {
-  const user = true;
   return (
     <nav className="flex h-12 items-center justify-between p-4 border-b-2 border-red-500 uppercase md:h-24 lg:px-20 xl:px-40">
       <div className="hidden md:flex items-center  md:gap-10 lg:gap-20 text-lg font-semibold flex-1 text-red-500">
@@ -14,19 +14,7 @@ const Nav = () => {
         <Link href="/">MASSIMO</Link>
       </div>
       <div className="hidden md:flex items-center justify-end md:gap-10 lg:gap-20 text-lg font-semibold flex-1 text-red-500">
-        <div
-          className={
-            user
-              ? "flex items-center justify-center md:gap-10 lg:gap-20"
-              : "hidden"
-          }
-        >
-          <Link href={"/orders"}>Orders</Link>
-          <Link href={"/cart"}>Cart (3)</Link>
-        </div>
-        <div className={user ? "hidden" : "flex"}>
-          <Link href={"/login"}>Login</Link>
-        </div>
+        <UserLinks />
       </div>
       <div className="block md:hidden">
         <Menu />

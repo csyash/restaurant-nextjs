@@ -1,15 +1,40 @@
 import React from "react";
-import { pizzas } from "@/app/data";
 import Image from "next/image";
 import Link from "next/link";
+import { ProductType } from "@/types/types";
 
-const CategoryPage = () => {
+type props = {
+  params: { category: String };
+};
+
+const getData = async (category: String) => {
+  const res = await fetch(
+    `http://localhost:3000/api/products?cat=${category}`,
+    {
+      cache: "no-cache",
+    }
+  );
+
+  if (!res.ok) throw new Error("Failed!");
+
+  return res.json();
+};
+
+const CategoryPage = async ({ params }: props) => {
+  const pizzas: ProductType[] = await getData(params.category);
+
+  if (pizzas.length == 0)
+    return (
+      <h1 className="text-2xl text-center text-red-500 font-bold md:px-20 lg:px-40 py-4 uppercase">
+        No {params.category}
+      </h1>
+    );
   return (
     <div className="text-red-500 flex flex-wrap  w-screen h-max">
       {pizzas.map((pizza) => (
         <Link
           href={`/product/${pizza.id}`}
-          className="flex flex-col gap-4 w-full py-2 h-[60vh] lg:h-[400px] md:w-1/2 lg:w-1/3 border-red-500 border-2 border-collapse group"
+          className="flex flex-col gap-4 w-full py-2 h-[60vh] lg:h-[400px] md:w-1/2 lg:w-1/3 border-red-500 border-2 border-collapse hover:bg-fuchsia-100"
         >
           <div className="relative h-full w-full">
             {pizza.img && (
@@ -17,7 +42,8 @@ const CategoryPage = () => {
                 alt={pizza.title}
                 src={pizza.img}
                 fill
-                className="object-contain group-hover:rotate-[30deg] transition-all ease-in"
+                className="object-contain"
+                sizes="100%"
               />
             )}
           </div>

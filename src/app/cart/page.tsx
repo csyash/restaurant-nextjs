@@ -1,34 +1,68 @@
+"use client";
+import { CartItemType } from "@/types/types";
+import { useCartStore } from "@/utils/CartStore";
 import Image from "next/image";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 const CartPage = () => {
+  const { totalItems, totalPrice, removeFromCart, products } = useCartStore();
+  const deliveryCharge: number = 5;
+  const handleDelteProductFromCart = (item: CartItemType) => {
+    removeFromCart(item);
+  };
+
+  useEffect(() => {
+    useCartStore.persist.rehydrate();
+  }, []);
+
   return (
     <div className="w-screen h-[calc(100vh-6rem)] md:h-[calc(100vh-9rem)] flex flex-col lg:flex-row lg:px-20 xl:px-40">
       {/* TOP CONTAINER  */}
-      <div className="flex-1 w-full overflow-y-scroll no-scrollbar md:py-4">
+      <div className="flex-1 w-full overflow-y-scroll no-scrollbar md:py-4 lg:py-8">
         {/* EACH ORDER  */}
         <div className="w-full h-max flex flex-col gap-4 max-sm:p-4 md:pr-8">
-          {[1, 2, 3].map((item) => {
+          {products.map((item) => {
             return (
               <div
                 className="flex items-center justify-between gap-4 w-full h-[120px] md:h-[150px]"
-                key={item}
+                key={item.id}
               >
-                <div className="relative flex-[3] h-full">
-                  <Image
-                    src={"/temporary/p1.png"}
-                    fill
-                    alt="pizza"
-                    className="object-contain"
-                  />
-                </div>
+                {item.img && (
+                  <div className="relative flex-[3] h-full">
+                    <Image
+                      src={item.img}
+                      fill
+                      alt="pizza"
+                      className="object-contain"
+                    />
+                  </div>
+                )}
                 <div className="flex-[4] flex flex-col text-red-500">
-                  <h1 className="text-xl font-bold">Sicilian Pizza</h1>
-                  <h2 className="text-xl">Large</h2>
+                  <h1 className="text-xl font-bold">
+                    {item.title} x{item.quantity}
+                  </h1>
+                  <h2 className="text-xl">{item.optionTitle}</h2>
                 </div>
-                <div className="flex-1 flex gap-8 text-red-500">
-                  <span className="text-2xl font-bold">$24</span>
-                  <span className="text-2xl cursor-pointer">X</span>
+                <div className="flex-1 flex items-center gap-8 text-red-500">
+                  <span className="text-2xl font-bold flex">${item.price}</span>
+                  <span className="text-lg font-semibold">
+                    (${item.price / item.quantity}x{item.quantity})
+                  </span>
+                  <span
+                    className="text-2xl cursor-pointer"
+                    onClick={() =>
+                      handleDelteProductFromCart({
+                        id: item.id,
+                        title: item.title,
+                        img: item.img,
+                        price: item.price,
+                        optionTitle: item.optionTitle,
+                        quantity: item.quantity,
+                      })
+                    }
+                  >
+                    X
+                  </span>
                 </div>
               </div>
             );
@@ -39,8 +73,8 @@ const CartPage = () => {
       <div className="flex-1 flex  p-4 md:px-20 bg-fuchsia-50 w-full font-[500] text-lg md:text-xl text-red-500 md:justify-center md:items-center ">
         <div className="w-full flex flex-col gap-4 lg:w-[80%]">
           <div className="flex justify-between items-center">
-            <span>Subtotal(3)</span>
-            <span>$81.7</span>
+            <span>Subtotal ({totalItems} items)</span>
+            <span>${totalPrice}</span>
           </div>
           <div className="flex justify-between items-center">
             <span>Service Cost</span>
@@ -48,12 +82,20 @@ const CartPage = () => {
           </div>
           <div className="flex justify-between items-center">
             <span>Delivery</span>
-            <span className="text-green-600">Free!</span>
+            {totalPrice < 50 ? (
+              <span className="text-green-600">${deliveryCharge}</span>
+            ) : (
+              <span className="text-green-600">Free!</span>
+            )}
           </div>
           <hr />
           <div className="flex justify-between items-center">
             <span>Total</span>
-            <span>$81.7</span>
+            {totalPrice < 50 ? (
+              <span>${totalPrice + deliveryCharge}</span>
+            ) : (
+              <span>${totalPrice}</span>
+            )}
           </div>
           <div className="w-full flex justify-end">
             <button className="uppercase bg-red-500 font-semibold text-white py-3 px-4 w-[150px] rounded-md">
