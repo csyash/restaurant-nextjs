@@ -34,6 +34,7 @@ const CategoryPage = async ({ params }: props) => {
       {pizzas.map((pizza) => (
         <Link
           href={`/product/${pizza.id}`}
+          key={pizza.id}
           className="flex flex-col gap-4 w-full py-2 h-[60vh] lg:h-[400px] md:w-1/2 lg:w-1/3 border-red-500 border-2 border-collapse hover:bg-fuchsia-100"
         >
           <div className="relative h-full w-full">
