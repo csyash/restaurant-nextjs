@@ -2,19 +2,58 @@ import React from "react";
 import Image from "next/image";
 import { ProductType } from "@/types/types";
 import Link from "next/link";
+import prisma from "@/utils/prismaConnect";
 
-const getData = async () => {
-  const res = await fetch("http://localhost:3000/api/products", {
-    cache: "no-cache",
+const getData2 = async () => {
+  const data = await prisma.product.findMany({
+    where: {
+      isFeatured: true,
+    },
   });
 
-  if (!res.ok) throw new Error("Unable to fetch data");
+  const products = data.map((item) => ({
+    id: item.id,
+    title: item.title,
+    desc: item.desc,
+    img: item.img,
+    price: Number(item.price),
+    options: mapOptions(item.options),
+  }));
 
-  return res.json();
+  return products;
+};
+
+const mapOptions = (
+  options: unknown
+): { title: string; additionalPrice: number }[] => {
+  if (!Array.isArray(options)) {
+    return [];
+  }
+
+  return options.map((option) => {
+    if (
+      typeof option === "object" &&
+      option !== null &&
+      "title" in option &&
+      "additionalPrice" in option
+    ) {
+      return {
+        title: option.title,
+        additionalPrice: Number(option.additionalPrice),
+      };
+    } else {
+      // Handle the case where option is not in the expected format
+      // You can log a warning or take appropriate action
+      return {
+        title: "Unknown Title",
+        additionalPrice: 0,
+      };
+    }
+  });
 };
 
 const FeaturedProducts = async () => {
-  const featuredProducts: ProductType[] = await getData();
+  const featuredProducts: ProductType[] = await getData2();
   return (
     <div className="w-screen overflow-x-scroll text-red-500 h-[80vh] no-scrollbar">
       {/* WRAPPER  */}

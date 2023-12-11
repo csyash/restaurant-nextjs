@@ -151,7 +151,7 @@ const ProductPage = ({ params }: { params: { id: string } }) => {
               addToCart({
                 id: singleProduct.id,
                 title: singleProduct.title,
-                img: singleProduct.img,
+                img: singleProduct.img || "",
                 price: totalPrice,
                 quantity: quantity,
                 optionTitle: singleProduct.options?.length

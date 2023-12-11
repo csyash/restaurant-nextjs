@@ -2,7 +2,7 @@
 import { OrderType } from "@/types/types";
 import { useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
-import AdminStatusField from "../components/AdminStatusField";
+import AdminStatusField from "@/components/AdminStatusField";
 import { useRouter } from "next/navigation";
 
 const OrdersPage = () => {

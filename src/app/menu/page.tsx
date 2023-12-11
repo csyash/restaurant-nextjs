@@ -1,21 +1,15 @@
 import React from "react";
 import Link from "next/link";
 import { MenuType } from "@/types/types";
+import prisma from "@/utils/prismaConnect";
 
-const getData = async () => {
-  const response = await fetch("http://localhost:3000/api/categories", {
-    cache: "no-cache",
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed!");
-  }
-
-  return response.json();
+const getData2 = async () => {
+  const categories = await prisma.category.findMany();
+  return categories;
 };
 
 const MenuPage = async () => {
-  const menu: MenuType = await getData();
+  const menu: MenuType = await getData2();
   return (
     <div className="w-screen h-[calc(100vh-6rem)] md:h-[calc(100vh-9rem)] md:p-4 lg:px-20 xl:px-40 flex flex-col items-center justify-center md:flex-row">
       {menu.map((item) => {

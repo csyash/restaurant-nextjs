@@ -2,6 +2,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
+import UserLinks from "./UserLinks";
 
 const links = [
   {
@@ -63,12 +64,7 @@ const Menu = () => {
                 : "font-semibold text-lg uppercase flex flex-col items-center justify-center gap-8"
             }
           >
-            <Link href={"/cart"} onClick={clickHandler}>
-              Cart (3)
-            </Link>
-            <Link href={"/orders"} onClick={clickHandler}>
-              Orders
-            </Link>
+            <UserLinks />
           </div>
 
           <div className="bg-yellow-500 text-white p-2 rounded-lg">

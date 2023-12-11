@@ -2,26 +2,62 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ProductType } from "@/types/types";
+import prisma from "@/utils/prismaConnect";
 
 type props = {
-  params: { category: String };
+  params: { category: string };
 };
 
-const getData = async (category: String) => {
-  const res = await fetch(
-    `http://localhost:3000/api/products?cat=${category}`,
-    {
-      cache: "no-cache",
+const getData2 = async (category: string) => {
+  const data = await prisma.product.findMany({
+    where: {
+      catSlug: category,
+    },
+  });
+
+  const products = data.map((item) => ({
+    id: item.id,
+    title: item.title,
+    desc: item.desc,
+    img: item.img,
+    price: Number(item.price),
+    options: mapOptions(item.options),
+  }));
+
+  return products;
+};
+
+const mapOptions = (
+  options: unknown
+): { title: string; additionalPrice: number }[] => {
+  if (!Array.isArray(options)) {
+    return [];
+  }
+
+  return options.map((option) => {
+    if (
+      typeof option === "object" &&
+      option !== null &&
+      "title" in option &&
+      "additionalPrice" in option
+    ) {
+      return {
+        title: option.title,
+        additionalPrice: Number(option.additionalPrice),
+      };
+    } else {
+      // Handle the case where option is not in the expected format
+      // You can log a warning or take appropriate action
+      return {
+        title: "Unknown Title",
+        additionalPrice: 0,
+      };
     }
-  );
-
-  if (!res.ok) throw new Error("Failed!");
-
-  return res.json();
+  });
 };
 
 const CategoryPage = async ({ params }: props) => {
-  const pizzas: ProductType[] = await getData(params.category);
+  const pizzas: ProductType[] = await getData2(params.category);
 
   if (pizzas.length == 0)
     return (

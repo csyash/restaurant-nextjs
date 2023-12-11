@@ -11,10 +11,11 @@ export type ProductType = {
   id: string;
   title: string;
   desc?: string;
-  img?: string;
+  img?: string | null;
   price: number;
   options?: { title: string; additionalPrice: number }[];
 };
+
 
 export type OrderType = {
   id: string;
