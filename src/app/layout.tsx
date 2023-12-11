@@ -27,6 +27,7 @@ export default function RootLayout({
           <Notification />
           <Nav />
           {children}
+          <Footer />
           <ToastContainer
             position="bottom-right"
             autoClose={2000}
@@ -34,7 +35,6 @@ export default function RootLayout({
             newestOnTop={false}
             theme="light"
           />
-          <Footer />
         </AuthProvider>
       </body>
     </html>

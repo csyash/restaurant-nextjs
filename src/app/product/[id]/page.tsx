@@ -9,6 +9,21 @@ import { useRouter } from "next/navigation";
 import { useCartStore } from "@/utils/CartStore";
 
 const ProductPage = ({ params }: { params: { id: string } }) => {
+  const { id } = params;
+  useEffect(() => {
+    const getData = async (id: string) => {
+      const res = await fetch(`http://localhost:3000/api/products/${id}`);
+
+      if (!res.ok) throw new Error("Something went wrong");
+
+      const data = await res.json();
+      setSingleProduct(data);
+    };
+
+    getData(id);
+    useCartStore.persist.rehydrate();
+  }, [id]);
+
   const { data: session } = useSession();
   const [quantity, setQuantity] = useState<number>(1);
   const [optionIdx, setOptionIdx] = useState<number>(0);
@@ -26,7 +41,6 @@ const ProductPage = ({ params }: { params: { id: string } }) => {
       },
     ],
   });
-  const { id } = params;
   const { addToCart } = useCartStore();
   const totalPrice = singleProduct.options?.length
     ? quantity *

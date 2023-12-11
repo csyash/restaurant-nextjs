@@ -26,3 +26,31 @@ export const GET = async() =>{
     }
     
 }
+
+export const POST = async(req:NextRequest)=>{
+
+    try{
+        const session = await getAuthSession()
+        const body = await req.json()
+        console.log(body)
+
+        const order = await prisma.order.create({
+            data:{
+                price:body.price,
+                products:body.products,
+                status:body.status,
+                user:{
+                    connect:{
+                        email:body.userEmail,
+                    }
+                }
+            }
+        })
+
+        return new NextResponse(JSON.stringify("Order Place Success"),{status:200})
+    }
+    catch(err){
+        console.log(err)
+        return new NextResponse(JSON.stringify({"message":"Something went wrong"}),{status:500})
+    }
+}

@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import { ProductType } from "@/types/types";
+import Link from "next/link";
 
 const getData = async () => {
   const res = await fetch("http://localhost:3000/api/products", {
@@ -21,7 +22,8 @@ const FeaturedProducts = async () => {
         {/* SINGLE ITEM  */}
         {featuredProducts.map((product) => {
           return (
-            <div
+            <Link
+              href={`/product/${product.id}`}
               key={product.id}
               className="w-screen flex  flex-col items-center justify-between h-full p-4 gap-8 hover:bg-fuchsia-50 md:w-[calc(100vw/2)] lg:w-[calc(100vw/3)] lg:gap-4"
             >
@@ -46,11 +48,11 @@ const FeaturedProducts = async () => {
                 <span className="font-bold text-2xl lg:text-3xl">
                   ${product.price}
                 </span>
-                <button className="bg-red-500 text-white font-bold px-4 py-3 w-max rounded-lg uppercase lg:font-extrabold">
-                  Add to Cart
+                <button className="bg-red-500  text-white font-bold px-4 py-3 w-max rounded-lg uppercase lg:font-extrabold">
+                  See product
                 </button>
               </div>
-            </div>
+            </Link>
           );
         })}
       </div>

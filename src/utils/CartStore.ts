@@ -47,5 +47,8 @@ export const useCartStore = create(persist<CartType & ActionTypes>((set,get)=>({
             totalPrice:state.totalPrice - receivedProduct!.price,
             totalItems:state.totalItems - receivedProduct!.quantity
         }))
+    },
+    resetCart(){
+        set(()=> INITIAL_STATE)
     }
 }),{name:"cart",skipHydration:true}))

@@ -12,7 +12,7 @@ const UserLinks = () => {
   }, []);
 
   const { status } = useSession();
-  const { totalItems } = useCartStore();
+  const { totalItems, resetCart } = useCartStore();
 
   if (status === "loading") return <p>Loading...</p>;
 
@@ -26,6 +26,7 @@ const UserLinks = () => {
             className="text-red-500 uppercase font-semibold cursor-pointer"
             onClick={() => {
               signOut();
+              resetCart();
               toast.success("LogOut Successful");
             }}
           >

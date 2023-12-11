@@ -1,19 +1,51 @@
 "use client";
-import { CartItemType } from "@/types/types";
+import { CartItemType, OrderType } from "@/types/types";
 import { useCartStore } from "@/utils/CartStore";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 const CartPage = () => {
-  const { totalItems, totalPrice, removeFromCart, products } = useCartStore();
+  useEffect(() => {
+    useCartStore.persist.rehydrate();
+  }, []);
+
+  const { totalItems, totalPrice, removeFromCart, products, resetCart } =
+    useCartStore();
   const deliveryCharge: number = 5;
   const handleDelteProductFromCart = (item: CartItemType) => {
     removeFromCart(item);
   };
+  const { data: session, status } = useSession();
+  const router = useRouter();
 
-  useEffect(() => {
-    useCartStore.persist.rehydrate();
-  }, []);
+  if (status === "unauthenticated") return router.push("/login");
+
+  if (status === "loading") return <p>Loading...</p>;
+
+  const handleNewOrder = async () => {
+    const newOrder = {
+      userEmail: session?.user.email,
+      price: totalPrice > 50 ? totalPrice : totalPrice + deliveryCharge,
+      products: products,
+      status: "Preparing",
+    };
+
+    const res = await fetch("http://localhost:3000/api/orders", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newOrder),
+    });
+
+    if (res.ok) {
+      toast.success("Order Placed"), resetCart();
+      return router.push("/orders");
+    } else {
+      console.log(await res.json());
+    }
+  };
 
   return (
     <div className="w-screen h-[calc(100vh-6rem)] md:h-[calc(100vh-9rem)] flex flex-col lg:flex-row lg:px-20 xl:px-40">
@@ -98,7 +130,11 @@ const CartPage = () => {
             )}
           </div>
           <div className="w-full flex justify-end">
-            <button className="uppercase bg-red-500 font-semibold text-white py-3 px-4 w-[150px] rounded-md">
+            <button
+              className="uppercase bg-red-500 font-semibold text-white py-3 px-4 w-[150px] rounded-md disabled:cursor-not-allowed disabled:bg-gray-500"
+              disabled={products.length == 0}
+              onClick={handleNewOrder}
+            >
               Checkout
             </button>
           </div>

@@ -6,18 +6,6 @@ import AdminStatusField from "../components/AdminStatusField";
 import { useRouter } from "next/navigation";
 
 const OrdersPage = () => {
-  const { data: session, status: authenticationStatus } = useSession();
-  const router = useRouter();
-  const [orders, setOrders] = useState<OrderType[]>([]);
-
-  if (authenticationStatus === "loading") {
-    return <p>Loading...</p>;
-  }
-
-  if (authenticationStatus === "unauthenticated") {
-    return router.push("");
-  }
-
   useEffect(() => {
     const getData = async () => {
       const res = await fetch("http://localhost:3000/api/orders");
@@ -30,6 +18,17 @@ const OrdersPage = () => {
 
     getData();
   }, []);
+  const { data: session, status: authenticationStatus } = useSession();
+  const router = useRouter();
+  const [orders, setOrders] = useState<OrderType[]>([]);
+
+  if (authenticationStatus === "loading") {
+    return <p>Loading...</p>;
+  }
+
+  if (authenticationStatus === "unauthenticated") {
+    return router.push("/");
+  }
 
   const isAdmin = session?.user.isAdmin;
 
