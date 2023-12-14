@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 const OrdersPage = () => {
   useEffect(() => {
     const getData = async () => {
-      const res = await fetch("http://localhost:3000/api/orders");
+      const res = await fetch("/api/orders");
 
       if (!res.ok) throw new Error("Orders fetching failed");
 

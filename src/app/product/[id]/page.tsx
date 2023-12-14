@@ -50,7 +50,7 @@ const ProductPage = ({ params }: { params: { id: string } }) => {
 
   useEffect(() => {
     const getData = async (id: string) => {
-      const res = await fetch(`http://localhost:3000/api/products/${id}`);
+      const res = await fetch(`/api/products/${id}`);
 
       if (!res.ok) throw new Error("Something went wrong");
 
@@ -63,7 +63,7 @@ const ProductPage = ({ params }: { params: { id: string } }) => {
   }, [id]);
 
   const deleteProductHandler = async (id: string) => {
-    const res = await fetch(`http://localhost:3000/api/products/${id}`, {
+    const res = await fetch(`/api/products/${id}`, {
       method: "DELETE",
     });
 
@@ -72,6 +72,7 @@ const ProductPage = ({ params }: { params: { id: string } }) => {
       toast.success("Product Deleted");
     } else {
       toast.error("Delete product failed");
+      router.push("/");
     }
   };
 

@@ -70,7 +70,7 @@ const AddPage = () => {
     console.log(temp);
 
     try {
-      const res = await fetch("http://localhost:3000/api/products", {
+      const res = await fetch("/api/products", {
         method: "POST",
         body: JSON.stringify(temp),
       });

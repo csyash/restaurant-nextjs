@@ -11,7 +11,7 @@ const AdminStatusField = (order: OrderType) => {
   const router = useRouter();
   const handleSubmit = async (e: React.FormEvent, id: string) => {
     e.preventDefault();
-    const res = await fetch(`http://localhost:3000/api/orders/${id}`, {
+    const res = await fetch(`/api/orders/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(status),
