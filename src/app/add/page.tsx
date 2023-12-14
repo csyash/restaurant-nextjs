@@ -1,7 +1,6 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
@@ -67,13 +66,14 @@ const AddPage = () => {
       options,
     };
 
-    console.log(temp);
-
     try {
-      const res = await fetch("http://localhost:3000/api/products", {
-        method: "POST",
-        body: JSON.stringify(temp),
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/products`,
+        {
+          method: "POST",
+          body: JSON.stringify(temp),
+        }
+      );
 
       const data = await res.json();
       toast.success(`${data.title} added`);

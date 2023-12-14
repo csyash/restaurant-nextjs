@@ -11,13 +11,19 @@ const AdminStatusField = (order: OrderType) => {
   const router = useRouter();
   const handleSubmit = async (e: React.FormEvent, id: string) => {
     e.preventDefault();
-    const res = await fetch(`http://localhost:3000/api/orders/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(status),
-    });
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/orders/${id}`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(status),
+      }
+    );
 
-    if (!res.ok) throw new Error("Updating failed");
+    if (!res.ok) {
+      toast.error("Failed");
+      return router.push("/");
+    }
 
     toast.success("Order status changed successfully");
     router.push("/orders");

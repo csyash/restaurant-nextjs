@@ -12,7 +12,9 @@ const ProductPage = ({ params }: { params: { id: string } }) => {
   const { id } = params;
   useEffect(() => {
     const getData = async (id: string) => {
-      const res = await fetch(`http://localhost:3000/api/products/${id}`);
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/products/${id}`
+      );
 
       if (!res.ok) throw new Error("Something went wrong");
 
@@ -48,24 +50,13 @@ const ProductPage = ({ params }: { params: { id: string } }) => {
         Number(singleProduct.options[optionIdx]?.additionalPrice))
     : quantity * Number(singleProduct.price);
 
-  useEffect(() => {
-    const getData = async (id: string) => {
-      const res = await fetch(`http://localhost:3000/api/products/${id}`);
-
-      if (!res.ok) throw new Error("Something went wrong");
-
-      const data = await res.json();
-      setSingleProduct(data);
-    };
-
-    getData(id);
-    useCartStore.persist.rehydrate();
-  }, [id]);
-
   const deleteProductHandler = async (id: string) => {
-    const res = await fetch(`http://localhost:3000/api/products/${id}`, {
-      method: "DELETE",
-    });
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/products/${id}`,
+      {
+        method: "DELETE",
+      }
+    );
 
     if (res.ok) {
       router.push("/");

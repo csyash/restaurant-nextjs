@@ -20,6 +20,7 @@ const MenuPage = async () => {
             style={{
               backgroundImage: `url(${item.img})`,
               backgroundPosition: "left",
+              backgroundRepeat: "no-repeat",
             }}
             className="rounded-md w-full flex-1 p-4 md:h-[60%]"
           >

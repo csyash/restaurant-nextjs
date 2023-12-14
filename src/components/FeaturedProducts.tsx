@@ -42,8 +42,6 @@ const mapOptions = (
         additionalPrice: Number(option.additionalPrice),
       };
     } else {
-      // Handle the case where option is not in the expected format
-      // You can log a warning or take appropriate action
       return {
         title: "Unknown Title",
         additionalPrice: 0,

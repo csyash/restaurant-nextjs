@@ -33,11 +33,14 @@ const CartPage = () => {
       status: "Preparing",
     };
 
-    const res = await fetch("http://localhost:3000/api/orders", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newOrder),
-    });
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/products`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newOrder),
+      }
+    );
 
     if (res.ok) {
       toast.success("Order Placed"), resetCart();

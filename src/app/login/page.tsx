@@ -1,6 +1,5 @@
 "use client";
 import Image from "next/image";
-import Link from "next/link";
 import React from "react";
 import { useSession, signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -8,7 +7,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const LoginPage = () => {
-  const { data, status } = useSession();
+  const { status } = useSession();
 
   const router = useRouter();
 
@@ -41,26 +40,11 @@ const LoginPage = () => {
               width={20}
               height={20}
               className="object-contain"
+              sizes="100%"
+              priority
             />
             <span>Sign in with Google</span>
           </button>
-          <button className="flex gap-4 p-4 ring-1 ring-blue-100 rounded-md">
-            <Image
-              src="/facebook.png"
-              alt=""
-              width={20}
-              height={20}
-              className="object-contain"
-            />
-            <span>Sign in with Facebook</span>
-          </button>
-          <p className="text-sm">
-            Have a problem?
-            <Link className="underline" href="/">
-              {" "}
-              Contact us
-            </Link>
-          </p>
         </div>
       </div>
     </div>
