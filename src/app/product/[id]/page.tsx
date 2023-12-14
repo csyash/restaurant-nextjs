@@ -12,7 +12,7 @@ const ProductPage = ({ params }: { params: { id: string } }) => {
   const { id } = params;
   useEffect(() => {
     const getData = async (id: string) => {
-      const res = await fetch(`http://localhost:3000/api/products/${id}`);
+      const res = await fetch(`/api/products/${id}`);
 
       if (!res.ok) throw new Error("Something went wrong");
 
@@ -24,7 +24,7 @@ const ProductPage = ({ params }: { params: { id: string } }) => {
     useCartStore.persist.rehydrate();
   }, [id]);
 
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [quantity, setQuantity] = useState<number>(1);
   const [optionIdx, setOptionIdx] = useState<number>(0);
   const router = useRouter();
@@ -47,20 +47,6 @@ const ProductPage = ({ params }: { params: { id: string } }) => {
       (Number(singleProduct.price) +
         Number(singleProduct.options[optionIdx]?.additionalPrice))
     : quantity * Number(singleProduct.price);
-
-  useEffect(() => {
-    const getData = async (id: string) => {
-      const res = await fetch(`/api/products/${id}`);
-
-      if (!res.ok) throw new Error("Something went wrong");
-
-      const data = await res.json();
-      setSingleProduct(data);
-    };
-
-    getData(id);
-    useCartStore.persist.rehydrate();
-  }, [id]);
 
   const deleteProductHandler = async (id: string) => {
     const res = await fetch(`/api/products/${id}`, {
@@ -167,6 +153,7 @@ const ProductPage = ({ params }: { params: { id: string } }) => {
                 } was added`
               );
             }}
+            disabled={status == "unauthenticated"}
           >
             Add to cart
           </button>
