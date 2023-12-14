@@ -7,24 +7,28 @@ import "react-toastify/dist/ReactToastify.css";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "@/utils/CartStore";
+import useSWR from "swr";
 
 const ProductPage = ({ params }: { params: { id: string } }) => {
   const { id } = params;
-  useEffect(() => {
-    const getData = async (id: string) => {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/products/${id}`
-      );
+  // useEffect(() => {
+  //   const getData = async (id: string) => {
+  //     const res = await fetch(
+  //       `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/products/${id}`
+  //     );
 
-      if (!res.ok) throw new Error("Something went wrong");
+  //     if (!res.ok) throw new Error("Something went wrong");
 
-      const data = await res.json();
-      setSingleProduct(data);
-    };
+  //     const data = await res.json();
+  //     setSingleProduct(data);
+  //   };
 
-    getData(id);
-    useCartStore.persist.rehydrate();
-  }, [id]);
+  //   getData(id);
+  //   useCartStore.persist.rehydrate();
+  // }, [id]);
+
+  const fetcher = (url: string) => fetch(url).then((res) => res.json());
+  const { data, error } = useSWR(`/api/products/${id}`, fetcher);
 
   const { data: session } = useSession();
   const [quantity, setQuantity] = useState<number>(1);
@@ -43,6 +47,7 @@ const ProductPage = ({ params }: { params: { id: string } }) => {
       },
     ],
   });
+  setSingleProduct(data);
   const { addToCart } = useCartStore();
   const totalPrice = singleProduct.options?.length
     ? quantity *
